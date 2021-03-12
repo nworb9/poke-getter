@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request
 import json
 
 app = Flask(__name__)
@@ -17,4 +17,5 @@ def catch_pokemon():
         pokemon_habitat = request.args.get('habitat_name')
     if request.args.get('habitat_id'):
         pokemon_habitat = request.args.get('habitat_id')
-    return pokemon_type
+
+    return pokemon_habitat
