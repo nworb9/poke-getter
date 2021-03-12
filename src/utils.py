@@ -13,8 +13,8 @@ def get_sprite(pokemon_url: str):
     pokemon_response = requests.get(pokemon_url)
     if pokemon_response.status_code == 200:
         pokemon_info = pokemon_response.json()
-        sprite_path = f"../media/{pokemon_info['name']}.png"
-        print(f"downloading file for {pokemon_info['name']}")
+        sprite_path = f"./media/{pokemon_info['name']}.png"
+        print(f"Downloading file for {pokemon_info['name']}")
         sprite_image = requests.get(pokemon_info['sprites']['front_default']).content
         with open(sprite_path, "wb+") as img:
             img.write(sprite_image)
@@ -29,7 +29,7 @@ def get_pokemon_by_type(type: str):
         pokemon_list = response.json()['pokemon']
     else:
         Exception('No Pokemon found for this type -- confirm the type is valid!')
-    return pokemon_list
+    return unnest_type_pokemon(pokemon_list)
 
 
 def get_pokemon_by_habitat(habitat: str):
@@ -38,7 +38,7 @@ def get_pokemon_by_habitat(habitat: str):
         pokemon_list = response.json()['pokemon_species']
     else:
         Exception('No Pokemon found for this habitat -- confirm the habitat is valid!')
-    return pokemon_list
+    return unnest_habitat_pokemon(pokemon_list)
 
 
 def unnest_type_pokemon(pokemon_list: list):
@@ -50,6 +50,21 @@ def unnest_type_pokemon(pokemon_list: list):
 
 def unnest_habitat_pokemon(pokemon_list: list):
     cleaned_pokemon = [
-        {'name': poke['name'], 'endpoint': poke['url']} for poke in pokemon_list
+        {'name': poke['name'], 'endpoint': poke['url'].replace('pokemon-species', 'pokemon')} for poke in pokemon_list
     ]
     return cleaned_pokemon
+
+
+def filter_pokemon_by_type_and_habitat(type_pokemon: list, habitat_pokemon: list):
+    final_pokemon = [poke for poke in type_pokemon if poke in habitat_pokemon]
+    return [{'name': poke['name'], 'sprite': get_sprite(poke['endpoint'])} for poke in final_pokemon]
+
+
+def catch_pokemon(habitat=None, type=None):
+    type_pokemon = get_pokemon_by_type(type)
+    habitat_pokemon = get_pokemon_by_habitat(habitat)
+    final_pokemon = filter_pokemon_by_type_and_habitat(type_pokemon=type_pokemon, habitat_pokemon=habitat_pokemon)
+    return {
+        "count": len(final_pokemon),
+        "pokemon": final_pokemon
+    }
