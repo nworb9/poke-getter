@@ -3,6 +3,7 @@
 ## To Run
 
 * Clone the repository
+* `pip install -r requirements.txt`
 * Set the FLASK_APP environment variable 
   * `$ export FLASK_APP=main.py`
 * Then run the app
