@@ -21,3 +21,4 @@ def catch_them_all():
         pokemon_habitat = request.args.get('habitat_id')
     pokemon_response = catch_pokemon(habitat=pokemon_habitat, type=pokemon_type)
     return jsonify(pokemon_response)
+
