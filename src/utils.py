@@ -1,8 +1,10 @@
 import requests
 import shutil
+import os
 
 TYPE_ENDPOINT = 'https://pokeapi.co/api/v2/type/'
 HABITAT_ENDPOINT = 'https://pokeapi.co/api/v2/pokemon-habitat/'
+MEDIA_DIR = "./media/"
 
 
 def get_sprite(pokemon_url: str):
@@ -13,7 +15,7 @@ def get_sprite(pokemon_url: str):
     pokemon_response = requests.get(pokemon_url)
     if pokemon_response.status_code == 200:
         pokemon_info = pokemon_response.json()
-        sprite_path = f"./media/{pokemon_info['name']}.png"
+        sprite_path = f"{MEDIA_DIR}{pokemon_info['name']}.png"
         print(f"Downloading file for {pokemon_info['name']}")
         sprite_image = requests.get(pokemon_info['sprites']['front_default']).content
         with open(sprite_path, "wb+") as img:
@@ -66,6 +68,8 @@ def filter_pokemon_by_type_and_habitat(type_pokemon: list, habitat_pokemon: list
 
 
 def catch_pokemon(habitat=None, type=None):
+    if not os.path.exists(MEDIA_DIR):
+        os.makedirs(MEDIA_DIR)
     type_pokemon = get_pokemon_by_type(type) if type else []
     habitat_pokemon = get_pokemon_by_habitat(habitat) if habitat else []
     final_pokemon = filter_pokemon_by_type_and_habitat(type_pokemon=type_pokemon, habitat_pokemon=habitat_pokemon)
