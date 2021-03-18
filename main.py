@@ -13,6 +13,9 @@ def howdy_world():
 
 @app.route('/pokemon/catch', methods=['GET'])
 def catch_them_all():
+    print(request.args)
+    pokemon_habitat = None
+    pokemon_type = None
     if request.args.get('type'):
         pokemon_type = request.args.get('type')
     if request.args.get('habitat_name'):

@@ -56,13 +56,18 @@ def unnest_habitat_pokemon(pokemon_list: list):
 
 
 def filter_pokemon_by_type_and_habitat(type_pokemon: list, habitat_pokemon: list):
-    final_pokemon = [poke for poke in type_pokemon if poke in habitat_pokemon]
+    if habitat_pokemon and type_pokemon:
+        final_pokemon = [poke for poke in type_pokemon if poke in habitat_pokemon]
+    elif habitat_pokemon:
+        final_pokemon = habitat_pokemon
+    elif type_pokemon:
+        final_pokemon = type_pokemon
     return [{'name': poke['name'], 'sprite': get_sprite(poke['endpoint'])} for poke in final_pokemon]
 
 
 def catch_pokemon(habitat=None, type=None):
-    type_pokemon = get_pokemon_by_type(type)
-    habitat_pokemon = get_pokemon_by_habitat(habitat)
+    type_pokemon = get_pokemon_by_type(type) if type else []
+    habitat_pokemon = get_pokemon_by_habitat(habitat) if habitat else []
     final_pokemon = filter_pokemon_by_type_and_habitat(type_pokemon=type_pokemon, habitat_pokemon=habitat_pokemon)
     return {
         "count": len(final_pokemon),
